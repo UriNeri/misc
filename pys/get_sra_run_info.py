@@ -1,4 +1,3 @@
-# THere most be a smarter way to do this...
 import xmltodict
 import requests
 import polars as pl
@@ -97,7 +96,7 @@ if __name__ == "__main__":
     # parser.add_argument("-c", "--output_csv", required=True, help="Output CSV file to save the metadata")
     parser.add_argument("-s", "--chunk_size", type=int, default=100, help="Size of each chunk of SRA run IDs")
     parser.add_argument("-w", "--max_workers", type=int, default=5, help="Maximum number of worker threads")
-    parser.add_argument("-n", "--column_name", type=int, default="subjectID", help="name of column/field in file that has lists the SRA run IDs")
+    parser.add_argument("-n", "--column_name", type=str, default="SubjectID", help="name of column/field in file that has lists the SRA run IDs")
 
     args = parser.parse_args()
     main(args.input_file, args.output_json,  args.chunk_size, args.max_workers, args.column_name) #args.output_csv,
