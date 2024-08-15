@@ -1,0 +1,166 @@
+# alias
+
+#Pack and unpack tar.gz files
+alias tarup="tar -zcf"
+alias tardown="tar -zxf"
+extract () {
+   if [ -f $1 ] ; then
+       case $1 in
+        *.tar.bz2)      tar xvjf $1 ;;
+        *.tar.gz)       tar xvzf $1 ;;
+        *.tar.xz)       tar Jxvf $1 ;;
+        *.bz2)          bunzip2 $1 ;;
+        *.rar)          unrar x $1 ;;
+        *.gz)           gunzip $1 ;;
+        *.tar)          tar xvf $1 ;;
+        *.tbz2)         tar xvjf $1 ;;
+        *.tgz)          tar xvzf $1 ;;
+        *.zip)          unzip $1 ;;
+        *.Z)            uncompress $1 ;;
+	    *.xz)		    xz -d $1;;
+        *.7z)           7z x $1 ;;
+        *.zstd)         zstd -d $1 ;;
+        *)              echo "don't know how to extract '$1'..." ;;
+       esac
+   else
+       echo "'$1' is not a valid file!"
+   fi
+}
+
+alias ETarG='tar -zxvf' # Extract Gzip.
+alias CTarG='tar -zcvf' # Compress in a Gzip.
+
+# # #create a directory and cd to it
+function mcd () { 
+    mkdir "$1" & cd "$1" 
+}
+
+# Get first line of tsv and prepend number to each field
+function head_count () { 
+    head -n1 "$1" | awk 'NR==1 {for (i=1; i<=NF; i++) $i = i ":" $i} 1'
+    }
+
+# #Quick navigation
+# alias cdgit='cd /home/neri/Documents/GitHub/'
+alias cd..="cd .."
+alias cd...="cd ../.."
+
+
+#reload .bashrc
+alias relbash="source ~/.bashrc"
+
+#tmux
+alias newmux='tmux new -s main'
+alias attmux='tmux attach -t main'
+
+#mamba
+alias mmde='mamba deactivate'
+alias mmsa='mamba activate crispy'
+
+#Conda
+alias cde='conda deactivate'
+alias csa='conda activate crispy'
+
+#bin
+alias binload='export PATH=$PATH:~/bin/'
+alias mmload='export PATH=$PATH:~/code/mmseqs/bin/'
+alias bat='~/.cargo/bin/bat'
+
+#bbmap
+alias bbload='export PATH=$PATH:~/code/bbmap/'
+
+#shortcuts
+alias l='ls -lsah'
+alias squn='squeue -u uneri'
+
+#IMG
+show_me_the_contig() {
+    full_name=$1
+    IFS='_' read -r part1 part2 part3 <<< "$full_name"
+    mt=${part1}
+    scf="${part2}_${part3}"
+    url="https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=MetaScaffoldDetail&page=metaScaffoldDetail&taxon_oid=${mt}&scaffold_oid=${scf}&data_type=assembled"
+#    xdg-open "$url"
+    echo "$url"
+}
+
+#export
+export TAXONKIT_DB=~/.taxonkit/
+
+# #rolypoly
+alias load_rolypoly='    mamba activate rolypoly    '
+
+
+
+# Check if a file exists
+check_file_exists() {
+  local file_path="$1"
+  if [ ! -e "$file_path" ]; then
+    echo "File not found: $file_path Tüdelü!"
+    exit 1
+  fi
+}
+
+
+# Check if file size is 0 bytes
+check_file_size() {
+    local file="$1"
+
+    # Get the file size using stat
+    file_size=$(stat --format="%s" "$file")
+
+    # Check if the file size is 0
+    if [ "$file_size" -eq 0 ]; then
+        echo "File '$file' is empty"
+        # exit 1
+    else
+        echo "File '$file' size is $file_size"
+    fi
+}
+
+# Check if file size is 0 and return true or false
+is_file_empty() {
+  local file="$1"
+
+  # Check if the file exists
+  if [ ! -e "$file" ]; then
+      echo "File '$file' does not exist."
+      return 1
+  fi
+
+  # Get the file size using stat
+  file_size=$(stat --format="%s" "$file")
+
+  # Check if the file size is 0
+  if [ "$file_size" -eq 0 ]; then
+      return 0  # true (file is empty)
+  fi
+  if [ "$file_size" -eq 28 ]; then
+      return 0  # true (file is empty - 28bytes is around what an empty .gz file should weigh).
+  else
+      return 1  # false (file is not empty)
+  fi
+      return 1  # false (file is not empty)
+
+}
+
+
+# Check dependencies - tries to run commands and based on the return value of the command breaks or proceeds.
+check_dependencies() {
+    local dependencies=("$@")
+    for dpnc in "${dependencies[@]}"; do
+        $dpnc -V &>/dev/null # ← puts the command whose exit code you want to check here &>/dev/null
+        if [ $? -eq 127 ]; then
+            echo "$dpnc Not Found! Exiting!!!"
+            exit 1
+        else
+            echo "$dpnc Found!"
+        fi
+    done
+}
+
+# Prints (echo) something (first arg) and also saves it to a log file (second arg) 
+logit () {
+   echo "$(date +"%Y-%m-%d %T") $2" | tee -a $1
+}
+
