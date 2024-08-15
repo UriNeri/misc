@@ -1,2 +1,2 @@
-# pymisc
-misc stuff mostly python
+# misc
+misc stuff 
